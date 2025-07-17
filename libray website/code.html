@@ -1,0 +1,134 @@
+// ✅ FIREBASE CONFIG (firebase/firebaseConfig.js)
+import { initializeApp } from "firebase/app";
+import { getAuth } from "firebase/auth";
+
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_PROJECT.firebaseapp.com",
+  projectId: "YOUR_PROJECT_ID",
+  storageBucket: "YOUR_PROJECT.appspot.com",
+  messagingSenderId: "SENDER_ID",
+  appId: "YOUR_APP_ID"
+};
+
+const app = initializeApp(firebaseConfig);
+export const auth = getAuth(app);
+
+
+// ✅ REGISTER PAGE (pages/register.js)
+import { useState } from 'react';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '../firebase/firebaseConfig';
+import { useRouter } from 'next/router';
+
+export default function Register() {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const router = useRouter();
+
+  const handleRegister = async () => {
+    try {
+      await createUserWithEmailAndPassword(auth, email, password);
+      router.push('/auth-gate');
+    } catch (error) {
+      alert('Error: ' + error.message);
+    }
+  };
+
+  return (
+    <div className="p-6 max-w-md mx-auto">
+      <h1 className="text-2xl font-bold mb-4">Register</h1>
+      <input className="border p-2 w-full mb-3" type="email" placeholder="Email" onChange={(e) => setEmail(e.target.value)} />
+      <input className="border p-2 w-full mb-3" type="password" placeholder="Password" onChange={(e) => setPassword(e.target.value)} />
+      <button className="bg-green-600 text-white px-4 py-2 w-full" onClick={handleRegister}>Register</button>
+    </div>
+  );
+}
+
+
+// ✅ LOGIN PAGE (pages/login.js)
+import { useState } from 'react';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '../firebase/firebaseConfig';
+import { useRouter } from 'next/router';
+
+export default function Login() {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const router = useRouter();
+
+  const handleLogin = async () => {
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+      router.push('/auth-gate');
+    } catch (error) {
+      alert('Login Failed: ' + error.message);
+    }
+  };
+
+  return (
+    <div className="p-6 max-w-md mx-auto">
+      <h1 className="text-2xl font-bold mb-4">Login</h1>
+      <input className="border p-2 w-full mb-3" type="email" placeholder="Email" onChange={(e) => setEmail(e.target.value)} />
+      <input className="border p-2 w-full mb-3" type="password" placeholder="Password" onChange={(e) => setPassword(e.target.value)} />
+      <button className="bg-blue-600 text-white px-4 py-2 w-full" onClick={handleLogin}>Login</button>
+    </div>
+  );
+  }
+
+
+// ✅ AUTH GATE PAGE (pages/auth-gate.js)
+import { useState } from 'react';
+import { useRouter } from 'next/router';
+
+export default function AuthGate() {
+  const [input, setInput] = useState('');
+  const router = useRouter();
+
+  const handleSubmit = () => {
+    if (input === 'devraj0723') {
+      router.push('/');
+    } else {
+      alert('Incorrect password');
+    }
+  };
+
+  return (
+    <div className="flex flex-col items-center justify-center min-h-screen">
+      <h1 className="text-xl mb-4">Enter Access Password</h1>
+      <input className="border p-2 mb-4 w-64" value={input} onChange={(e) => setInput(e.target.value)} placeholder="Enter password" />
+      <button onClick={handleSubmit} className="bg-black text-white px-4 py-2">Unlock</button>
+    </div>
+  );
+}
+
+
+// ✅ NAVBAR (components/Navbar.js)
+export default function Navbar() {
+  return (
+    <nav className="bg-gray-900 text-white p-4 flex justify-between items-center">
+      <h1 className="text-lg font-bold">TextbookVideo Hub</h1>
+      <div className="space-x-4">
+        <a href="/bsc-cs/sem1" className="hover:underline">BSc CS</a>
+        <a href="/data-science/sem1" className="hover:underline">Data Science</a>
+        <a href="/it/sem1" className="hover:underline">IT</a>
+        <a href="/admin" className="hover:underline">Admin</a>
+      </div>
+    </nav>
+  );
+}
+
+
+// ✅ DASHBOARD PAGE (pages/index.js)
+import Navbar from '../components/Navbar';
+export default function Home() {
+  return (
+    <>
+      <Navbar />
+      <div className="p-8">
+        <h1 className="text-3xl font-semibold mb-4">Welcome to TextbookVideo Hub</h1>
+        <p>Choose your course above to begin exploring textbooks and videos.</p>
+      </div>
+    </>
+  );
+}
